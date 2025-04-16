@@ -23,7 +23,7 @@ router.post('/', async (req, res) => {
     const { name, availableBeds, activeStaff } = req.body;
     const newWard = new Ward({ name, availableBeds, activeStaff });
     await newWard.save();
-    res.redirect('/wards');
+    res.redirect('/');
 });
 
 // Show form to edit a ward
