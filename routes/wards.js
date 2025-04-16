@@ -32,11 +32,30 @@ router.get('/:id/edit', async (req, res) => {
     res.render('wards/edit', { ward });
 });
 
-// Update ward
+// Update ward with confirmation code
 router.put('/:id', async (req, res) => {
-    const { name, availableBeds, activeStaff } = req.body;
-    const updatedWard = await Ward.findByIdAndUpdate(req.params.id, { name, availableBeds, activeStaff }, { new: true });
-    res.redirect('/');
+    const { name, availableBeds, activeStaff, confirmationCode } = req.body;
+
+    // Check if confirmation code matches
+    if (confirmationCode !== process.env.CONFIRMATION_CODE) {
+        return res.status(403).send("Invalid confirmation code. Update not allowed.");
+    }
+
+    try {
+        const updatedWard = await Ward.findByIdAndUpdate(
+            req.params.id,
+            {
+                name,
+                availableBeds,
+                activeStaff: activeStaff.split(',').map(s => s.trim()) // clean up staff list
+            },
+            { new: true }
+        );
+        res.redirect('/');
+    } catch (err) {
+        console.error(err);
+        res.status(500).send("Error updating ward.");
+    }
 });
 
 module.exports = router;

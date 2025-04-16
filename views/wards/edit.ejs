@@ -15,6 +15,10 @@
             <label for="activeStaff">Active Staff (comma separated)</label>
             <input type="text" name="activeStaff" id="activeStaff" class="form-control" value="<%= ward.activeStaff.join(', ') %>" required>
         </div>
+        <div class="form-group">
+            <label for="confirmationCode">Confirmation Code</label>
+            <input type="password" name="confirmationCode" id="confirmationCode" class="form-control" required>
+        </div>
         <button type="submit" class="btn btn-primary">Update Ward</button>
     </form>
 </div>
