@@ -1,0 +1,55 @@
+<%- include('partials/header') %>
+<div class="container mt-5">
+    <h1>Wards</h1>
+    <a href="/wards/new" class="btn btn-primary mb-3">Add New Ward</a>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th class="font-weight-bold">Name</th>
+                <th class="font-weight-bold">Available Beds</th>
+                <th class="font-weight-bold">Active Staff</th>
+                <th class="font-weight-bold">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% wards.forEach(ward => { %>
+                <!-- Conditional class based on available beds -->
+                <tr class="<%= ward.availableBeds === 0 ? 'bg-danger' : ward.availableBeds <= 3 ? 'bg-warning' : ward.availableBeds >= 4 ? 'bg-success' : '' %>">
+                    <td class="font-weight-bold"><%= ward.name %></td>
+                    <td class="font-weight-bold"><%= ward.availableBeds %></td>
+                    <td class="font-weight-bold"><%= ward.activeStaff.join(', ') %></td>
+                    <td>
+                        <a href="/wards/<%= ward._id %>/edit" class="btn btn-info btn-sm">Edit</a>
+                    </td>
+                </tr>
+            <% }) %>
+        </tbody>
+    </table>
+
+    <h1>Patients</h1>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th class="font-weight-bold">Name</th>
+                <th class="font-weight-bold">Age</th>
+                <th class="font-weight-bold">NHS Number</th>
+                <th class="font-weight-bold">Condition</th>
+                <th class="font-weight-bold">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% patients.forEach(patient => { %>
+                <tr>
+                    <td class="font-weight-bold"><%= patient.name %></td>
+                    <td class="font-weight-bold"><%= patient.age %></td>
+                    <td class="font-weight-bold"><%= patient.nhsNumber %></td>
+                    <td class="font-weight-bold"><%= patient.condition %></td>
+                    <td>
+                        <a href="/patients/<%= patient._id %>" class="btn btn-info btn-sm">View</a>
+                    </td>
+                </tr>
+            <% }) %>
+        </tbody>
+    </table>
+</div>
+<%- include('partials/footer') %>

@@ -1,0 +1,17 @@
+.bg-danger {
+    background-color: #f8d7da !important;  /* Red background */
+    font-weight: bold;
+}
+
+.bg-warning {
+    background-color: #fff3cd !important;  /* Yellow background */
+    font-weight: bold;
+}
+
+.bg-availableBeds {
+    background-color: green;
+}
+
+.font-weight-bold {
+    font-weight: bolder;
+}
