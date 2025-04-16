@@ -23,15 +23,22 @@ app.use('/patients', patientRoutes);
 
 app.get('/', async (req, res) => {
     try {
-        // Fetch both wards and patients from MongoDB
-        const wards = await Ward.find();  // Fetch wards from MongoDB
-        const patients = await Patient.find();  // Fetch patients from MongoDB
+        const searchQuery = req.query.search || '';
+        const wards = await Ward.find();
+        const patients = await Patient.find(
+            searchQuery
+                ? { name: new RegExp(searchQuery, 'i') }
+                : {}
+        );
 
-        // Render the homepage and pass both the wards and patients data
-        res.render('index', { wards, patients });
+        res.render('index', {
+            wards,
+            patients,
+            searchQuery // 🟢 Must be passed here
+        });
     } catch (err) {
-        console.log(err);
-        res.status(500).send("Error fetching data.");
+        console.error(err);
+        res.status(500).send('Server Error');
     }
 });
 

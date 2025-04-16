@@ -17,7 +17,7 @@ router.get('/new', (req, res) => {
 router.post('/', async (req, res) => {
     const { name, age, nhsNumber, condition } = req.body;
     await Patient.create({ name, age, nhsNumber, condition });
-    res.redirect('/patients');
+    res.redirect('/');
 });
 
 // View single patient

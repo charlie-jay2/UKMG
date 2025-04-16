@@ -36,7 +36,7 @@ router.get('/:id/edit', async (req, res) => {
 router.put('/:id', async (req, res) => {
     const { name, availableBeds, activeStaff } = req.body;
     const updatedWard = await Ward.findByIdAndUpdate(req.params.id, { name, availableBeds, activeStaff }, { new: true });
-    res.redirect('/wards');
+    res.redirect('/');
 });
 
 module.exports = router;

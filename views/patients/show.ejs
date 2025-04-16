@@ -10,12 +10,28 @@
     <p>No records yet.</p>
   <% } else { %>
     <ul class="list-group">
-      <% patient.medicalRecords.forEach(record => { %>
+      <% 
+        let previousDate = null; // Track the previous record's date
+        patient.medicalRecords.forEach(record => { 
+        const recordDate = new Date(record.updatedAt).toLocaleDateString(); // Get the formatted date
+      %>
+
+        <% if (previousDate !== null && recordDate !== previousDate) { %>
+          <!-- Add a separator line if the date has changed -->
+          <li class="list-group-item">
+            <hr>
+            <small class="text-muted">New history above: <%= recordDate %></small>
+            <hr>
+          </li>
+        <% } %>
+
         <li class="list-group-item">
           <strong>Stage:</strong> <%= record.stage %><br />
           <strong>Notes:</strong> <%= record.notes %><br />
-          <small><%= record.updatedAt.toLocaleString() %></small>
+          <small><%= new Date(record.updatedAt).toLocaleString() %></small>
         </li>
+
+        <% previousDate = recordDate; // Update the previous date with the current one %>
       <% }) %>
     </ul>
   <% } %>

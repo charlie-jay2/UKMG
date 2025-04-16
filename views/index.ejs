@@ -1,4 +1,19 @@
 <%- include('partials/header') %>
+
+<style>
+    .table-scroll-container {
+        max-height: 200px; /* Maximum height for the table container (for 4 rows) */
+        overflow-y: auto;
+        overflow-x: hidden;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+    }
+
+    .table tbody tr {
+        height: 50px; /* Adjust row height */
+    }
+</style>
+
 <div class="container mt-5">
     <h1>Wards</h1>
     <a href="/wards/new" class="btn btn-primary mb-3">Add New Ward</a>
@@ -13,8 +28,7 @@
         </thead>
         <tbody>
             <% wards.forEach(ward => { %>
-                <!-- Conditional class based on available beds -->
-                <tr class="<%= ward.availableBeds === 0 ? 'bg-danger' : ward.availableBeds <= 3 ? 'bg-warning' : ward.availableBeds >= 4 ? 'bg-success' : '' %>">
+                <tr class="<%= ward.availableBeds === 1 ? 'bg-danger' : ward.availableBeds <= 3 ? 'bg-warning' : ward.availableBeds >= 4 ? 'bg-success' : '' %>">
                     <td class="font-weight-bold"><%= ward.name %></td>
                     <td class="font-weight-bold"><%= ward.availableBeds %></td>
                     <td class="font-weight-bold"><%= ward.activeStaff.join(', ') %></td>
@@ -27,30 +41,45 @@
     </table>
 
     <h1>Patients</h1>
+
+    <!-- 🔍 Search form -->
+    <form method="GET" action="/" class="mb-3">
+        <div class="input-group">
+            <input type="text" name="search" value="<%= searchQuery || '' %>" class="form-control" placeholder="Search patients by name...">
+            <button class="btn btn-primary" type="submit">Search</button>
+        </div>
+    </form>
+
     <a href="/patients/new" class="btn btn-primary mb-3">Add New Patient</a>
-    <table class="table table-bordered">
-        <thead>
-            <tr>
-                <th class="font-weight-bold">Name</th>
-                <th class="font-weight-bold">Age</th>
-                <th class="font-weight-bold">NHS Number</th>
-                <th class="font-weight-bold">Condition</th>
-                <th class="font-weight-bold">Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            <% patients.forEach(patient => { %>
+
+    <!-- Scrollable Patient Table -->
+    <div class="table-scroll-container">
+        <table class="table table-bordered">
+            <thead>
                 <tr>
-                    <td class="font-weight-bold"><%= patient.name %></td>
-                    <td class="font-weight-bold"><%= patient.age %></td>
-                    <td class="font-weight-bold"><%= patient.nhsNumber %></td>
-                    <td class="font-weight-bold"><%= patient.condition %></td>
-                    <td>
-                        <a href="/patients/<%= patient._id %>" class="btn btn-info btn-sm">View</a>
-                    </td>
+                    <th class="font-weight-bold">Name</th>
+                    <th class="font-weight-bold">Age</th>
+                    <th class="font-weight-bold">NHS Number</th>
+                    <th class="font-weight-bold">Condition</th>
+                    <th class="font-weight-bold">Actions</th>
                 </tr>
-            <% }) %>
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                <% patients.forEach(patient => { %>
+                    <tr>
+                        <td class="font-weight-bold"><%= patient.name %></td>
+                        <td class="font-weight-bold"><%= patient.age %></td>
+                        <td class="font-weight-bold"><%= patient.nhsNumber %></td>
+                        <td class="font-weight-bold"><%= patient.condition %></td>
+                        <td>
+                            <a href="/patients/<%= patient._id %>" class="btn btn-info btn-sm">View</a>
+                        </td>
+                    </tr>
+                <% }) %>
+            </tbody>
+        </table>
+    </div>
+
 </div>
+
 <%- include('partials/footer') %>

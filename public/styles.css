@@ -15,3 +15,24 @@
 .font-weight-bold {
     font-weight: bolder;
 }
+
+.text-muted {
+    font-weight: bolder;
+}
+
+.table-scroll-container {
+    max-height: 4 * 50px; /* Maximum 4 rows of height */
+    overflow-y: auto;
+    overflow-x: hidden;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+/* Optional: Adjust row height if necessary */
+.table tbody tr {
+    height: 50px; /* Adjust based on your table row height */
+}
+
+body {
+    overflow-x: hidden;
+}
