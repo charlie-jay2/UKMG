@@ -1,6 +1,28 @@
 <%- include('../partials/header') %>
 <div class="container mt-5">
-  <h1><%= patient.name %></h1>
+  <!-- Patient Edit Form at the Top -->
+  <form method="POST" action="/patients/<%= patient._id %>?_method=PUT" class="mb-4">
+    <h4>Edit Patient Details</h4>
+    <div class="mb-3">
+      <label class="form-label">Patient Name</label>
+      <input type="text" name="name" class="form-control" value="<%= patient.name %>" required>
+    </div>
+    <div class="mb-3">
+      <label class="form-label">Age</label>
+      <input type="number" name="age" class="form-control" value="<%= patient.age %>" required>
+    </div>
+    <div class="mb-3">
+      <label class="form-label">NHS Number</label>
+      <input type="text" name="nhsNumber" class="form-control" value="<%= patient.nhsNumber %>" required>
+    </div>
+    <div class="mb-3">
+      <label class="form-label">Chief Complaint</label>
+      <input type="text" name="condition" class="form-control" value="<%= patient.condition %>" required>
+    </div>
+    <button class="btn btn-success">Update Patient Details</button>
+  </form>
+
+  <!-- Patient Information -->
   <p><strong>Age:</strong> <%= patient.age %></p>
   <p><strong>NHS Number:</strong> <%= patient.nhsNumber %></p>
   <p><strong>Initial Condition:</strong> <%= patient.condition %></p>
@@ -28,6 +50,32 @@
         <li class="list-group-item">
           <strong>Stage:</strong> <%= record.stage %><br />
           <strong>Notes:</strong> <%= record.notes %><br />
+          
+          <!-- Check if the stage is Triage and display the detailed fields -->
+          <% if (record.stage === 'Triage') { %>
+            <div><strong>-- <span style="font-size: 1.25rem;">Patient Clinical Details</span> --</strong></div>
+            <div><strong>Initial Workup:</strong> <%= record.clinicalDetails && record.clinicalDetails.initialWorkupTime ? record.clinicalDetails.initialWorkupTime : 'N/A' %></div>
+            <div><strong>Presenting Complaint:</strong> <%= record.clinicalDetails && record.clinicalDetails.presentingComplaint ? record.clinicalDetails.presentingComplaint : 'N/A' %></div>
+            <div><strong>Events Leading Up To Complaint:</strong> <%= record.clinicalDetails && record.clinicalDetails.eventsLeadingUpToComplaint ? record.clinicalDetails.eventsLeadingUpToComplaint : 'N/A' %></div>
+            <div><strong>Drug History:</strong> <%= record.clinicalDetails && record.clinicalDetails.drugHistory ? record.clinicalDetails.drugHistory : 'N/A' %></div>
+            <div><strong>Allergies:</strong> <%= record.clinicalDetails && record.clinicalDetails.allergies ? record.clinicalDetails.allergies : 'N/A' %></div>
+            <div><strong>Medical History:</strong> <%= record.clinicalDetails && record.clinicalDetails.medicalHistory ? record.clinicalDetails.medicalHistory : 'N/A' %></div>
+
+            <div><strong>-- <span style="font-size: 1.25rem;">Social History</span> --</strong></div>
+            <div><strong>Drink Regularly:</strong> <%= record.socialHistory && record.socialHistory.drinkRegularly !== undefined ? (record.socialHistory.drinkRegularly ? 'Yes' : 'No') : 'N/A' %></div>
+            <div><strong>Smokes:</strong> <%= record.socialHistory && record.socialHistory.smokes !== undefined ? (record.socialHistory.smokes ? 'Yes' : 'No') : 'N/A' %></div>
+            <div><strong>Lives Alone:</strong> <%= record.socialHistory && record.socialHistory.livesAlone !== undefined ? (record.socialHistory.livesAlone ? 'Yes' : 'No') : 'N/A' %></div>
+            <div><strong>Employed:</strong> <%= record.socialHistory && record.socialHistory.employed !== undefined ? (record.socialHistory.employed ? 'Yes' : 'No') : 'N/A' %></div>
+
+            <div><strong>-- <span style="font-size: 1.25rem;">Observations</span> --</strong></div>
+            <div><strong>HR:</strong> <%= record.observations && record.observations.hr ? record.observations.hr : 'N/A' %></div>
+            <div><strong>SpO2:</strong> <%= record.observations && record.observations.sp02 ? record.observations.sp02 : 'N/A' %></div>
+            <div><strong>BP:</strong> <%= record.observations && record.observations.bp ? record.observations.bp : 'N/A' %></div>
+            <div><strong>RR:</strong> <%= record.observations && record.observations.rr ? record.observations.rr : 'N/A' %></div>
+            <div><strong>Temp:</strong> <%= record.observations && record.observations.temp ? record.observations.temp : 'N/A' %></div>
+            <div><strong>Taken By:</strong> <%= record.observations && record.observations.takenBy ? record.observations.takenBy : 'N/A' %></div>
+          <% } %>
+
           <small><%= new Date(record.updatedAt).toLocaleString() %></small>
         </li>
 
