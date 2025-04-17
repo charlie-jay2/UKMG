@@ -5,8 +5,10 @@ const methodOverride = require('method-override');
 const bodyParser = require('body-parser');
 const path = require('path');
 const app = express();
-const Ward = require('./models/Ward');  // Import the Ward model
-const Patient = require('./models/Patient')
+
+const Ward = require('./models/Ward');
+const Patient = require('./models/Patient');
+const WaitTime = require('./models/WaitTime');
 
 mongoose.connect(process.env.MONGO_URI)
     .then(() => console.log('MongoDB Connected'))
@@ -21,6 +23,13 @@ app.use(methodOverride('_method'));
 const patientRoutes = require('./routes/patients');
 app.use('/patients', patientRoutes);
 
+const wardRoutes = require('./routes/wards');
+app.use('/wards', wardRoutes);
+
+// ✅ Ensure file is named waitTime.js exactly (not WaitTime.js)
+const waitTimeRoutes = require('./routes/waitTime');
+app.use('/wait-times', waitTimeRoutes);
+
 app.get('/', async (req, res) => {
     try {
         const searchQuery = req.query.search || '';
@@ -30,20 +39,19 @@ app.get('/', async (req, res) => {
                 ? { name: new RegExp(searchQuery, 'i') }
                 : {}
         );
+        const waitTime = await WaitTime.findOne();
 
         res.render('index', {
             wards,
             patients,
-            searchQuery // 🟢 Must be passed here
+            searchQuery,
+            waitTimes: waitTime || { minors: 0, majors: 0 }
         });
     } catch (err) {
         console.error(err);
         res.status(500).send('Server Error');
     }
 });
-
-const wardRoutes = require('./routes/wards');
-app.use('/wards', wardRoutes);
 
 const port = process.env.PORT || 10000;
 app.listen(port, () => {

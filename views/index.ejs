@@ -2,7 +2,7 @@
 
 <style>
     .table-scroll-container {
-        max-height: 200px; /* Maximum height for the table container (for 4 rows) */
+        max-height: 200px;
         overflow-y: auto;
         overflow-x: hidden;
         border: 1px solid #ddd;
@@ -10,7 +10,7 @@
     }
 
     .table tbody tr {
-        height: 50px; /* Adjust row height */
+        height: 50px;
     }
 </style>
 
@@ -20,18 +20,18 @@
     <table class="table table-bordered">
         <thead>
             <tr>
-                <th class="font-weight-bold">Name</th>
-                <th class="font-weight-bold">Available Beds</th>
-                <th class="font-weight-bold">Active Staff</th>
-                <th class="font-weight-bold">Actions</th>
+                <th>Name</th>
+                <th>Available Beds</th>
+                <th>Active Staff</th>
+                <th>Actions</th>
             </tr>
         </thead>
         <tbody>
             <% wards.forEach(ward => { %>
                 <tr class="<%= ward.availableBeds === 1 ? 'bg-danger' : ward.availableBeds <= 3 ? 'bg-warning' : ward.availableBeds >= 4 ? 'bg-success' : '' %>">
-                    <td class="font-weight-bold"><%= ward.name %></td>
-                    <td class="font-weight-bold"><%= ward.availableBeds %></td>
-                    <td class="font-weight-bold"><%= ward.activeStaff.join(', ') %></td>
+                    <td><%= ward.name %></td>
+                    <td><%= ward.availableBeds %></td>
+                    <td><%= ward.activeStaff.join(', ') %></td>
                     <td>
                         <a href="/wards/<%= ward._id %>/edit" class="btn btn-info btn-sm">Edit</a>
                     </td>
@@ -40,9 +40,114 @@
         </tbody>
     </table>
 
-    <h1>Patients</h1>
+    <h1>Wait Times</h1>
 
-    <!-- 🔍 Search form -->
+    <% if (!waitTimes || !waitTimes.minors || !waitTimes.majors) { %>
+        <p><strong>Add WaitTimes</strong></p>
+        <button type="button" class="btn btn-secondary mb-3" data-bs-toggle="modal" data-bs-target="#addWaitTimesModal">
+            Add Wait Times
+        </button>
+    <% } else { %>
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Category</th>
+                    <th>Wait Time</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Minors</td>
+                    <td>
+                        <% 
+                            const minorsTime = waitTimes.minors || 0;
+                            const minorsHours = Math.floor(minorsTime / 60);
+                            const minorsMinutes = minorsTime % 60;
+                            const formattedMinors = minorsHours > 0 
+                                ? `${minorsHours} hour${minorsHours > 1 ? 's' : ''} ${minorsMinutes} min` 
+                                : `${minorsMinutes} minute${minorsMinutes !== 1 ? 's' : ''}`;
+                        %>
+                        <%= formattedMinors %>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Majors</td>
+                    <td>
+                        <% 
+                            const majorsTime = waitTimes.majors || 0;
+                            const majorsHours = Math.floor(majorsTime / 60);
+                            const majorsMinutes = majorsTime % 60;
+                            const formattedMajors = majorsHours > 0 
+                                ? `${majorsHours} hour${majorsHours > 1 ? 's' : ''} ${majorsMinutes} min` 
+                                : `${majorsMinutes} minute${majorsMinutes !== 1 ? 's' : ''}`;
+                        %>
+                        <%= formattedMajors %>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <button type="button" class="btn btn-secondary mb-3" data-bs-toggle="modal" data-bs-target="#editWaitTimesModal">
+            Edit Wait Times
+        </button>
+    <% } %>
+
+    <!-- Modal for Adding Wait Times -->
+    <div class="modal fade" id="addWaitTimesModal" tabindex="-1" aria-labelledby="addWaitTimesModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <form method="POST" action="/wait-times/create">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="addWaitTimesModalLabel">Add Wait Times</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body">
+                <div class="mb-3">
+                  <label for="minors" class="form-label">Minors (in minutes)</label>
+                  <input type="number" class="form-control" name="minors" id="minors" required>
+                </div>
+                <div class="mb-3">
+                  <label for="majors" class="form-label">Majors (in minutes)</label>
+                  <input type="number" class="form-control" name="majors" id="majors" required>
+                </div>
+              </div>
+              <div class="modal-footer">
+                <button type="submit" class="btn btn-primary">Save Wait Times</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+              </div>
+            </div>
+          </form>
+      </div>
+    </div>
+
+    <!-- Modal for Editing Wait Times -->
+    <div class="modal fade" id="editWaitTimesModal" tabindex="-1" aria-labelledby="editWaitTimesModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <form method="POST" action="/wait-times/update">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="editWaitTimesModalLabel">Edit Wait Times</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body">
+                <div class="mb-3">
+                  <label for="minors" class="form-label">Minors (in minutes)</label>
+                  <input type="number" class="form-control" name="minors" id="minors" value="<%= waitTimes.minors %>" required>
+                </div>
+                <div class="mb-3">
+                  <label for="majors" class="form-label">Majors (in minutes)</label>
+                  <input type="number" class="form-control" name="majors" id="majors" value="<%= waitTimes.majors %>" required>
+                </div>
+              </div>
+              <div class="modal-footer">
+                <button type="submit" class="btn btn-primary">Save changes</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+              </div>
+            </div>
+          </form>
+      </div>
+    </div>
+
+    <h1>Patients</h1>
     <form method="GET" action="/" class="mb-3">
         <div class="input-group">
             <input type="text" name="search" value="<%= searchQuery || '' %>" class="form-control" placeholder="Search patients by name...">
@@ -52,25 +157,24 @@
 
     <a href="/patients/new" class="btn btn-primary mb-3">Add New Patient</a>
 
-    <!-- Scrollable Patient Table -->
     <div class="table-scroll-container">
         <table class="table table-bordered">
             <thead>
                 <tr>
-                    <th class="font-weight-bold">Name</th>
-                    <th class="font-weight-bold">Age</th>
-                    <th class="font-weight-bold">NHS Number</th>
-                    <th class="font-weight-bold">Condition</th>
-                    <th class="font-weight-bold">Actions</th>
+                    <th>Name</th>
+                    <th>Age</th>
+                    <th>NHS Number</th>
+                    <th>Condition</th>
+                    <th>Actions</th>
                 </tr>
             </thead>
             <tbody>
                 <% patients.forEach(patient => { %>
                     <tr>
-                        <td class="font-weight-bold"><%= patient.name %></td>
-                        <td class="font-weight-bold"><%= patient.age %></td>
-                        <td class="font-weight-bold"><%= patient.nhsNumber %></td>
-                        <td class="font-weight-bold"><%= patient.condition %></td>
+                        <td><%= patient.name %></td>
+                        <td><%= patient.age %></td>
+                        <td><%= patient.nhsNumber %></td>
+                        <td><%= patient.condition %></td>
                         <td>
                             <a href="/patients/<%= patient._id %>" class="btn btn-info btn-sm">View</a>
                         </td>
@@ -79,7 +183,6 @@
             </tbody>
         </table>
     </div>
-
 </div>
 
 <%- include('partials/footer') %>
